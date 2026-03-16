@@ -48,7 +48,8 @@ const template = document.createElement('template')
 function getImgSrc (html) {
   try {
     template.innerHTML = html
-    return template.content.childNodes[0].src
+    const img = template.content.childNodes[0]
+    return img.getAttribute('origin') || img.src
   } catch (e) {
     return ''
   }

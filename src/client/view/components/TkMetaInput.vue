@@ -102,15 +102,37 @@ export default {
         this.getQQNick(qqNum)
       }
     },
-    async getQQNick (qqNum) {
+    async getQQNick(qqNum) {
+      this.loading = true;
+      const token = 'yUxj&1%6i%xPYRzu';
+      const url = `https://api.ncii.cn/qq/?qq=${qqNum}&token=${encodeURIComponent(token)}`;
+
       try {
-        const { result } = await call(null, 'GET_QQ_NICK', { qq: qqNum })
-        if (result && result.nick) {
-          this.metaData.nick = result.nick
-          this.updateMeta()
+        // 使用 fetch 并 await 等待响应
+        const response = await fetch(url);
+
+        // 检查 HTTP 状态码是否正常
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-      } catch (e) {
-        console.warn('获取 QQ 昵称失败：', e)
+
+        // 等待 JSON 解析完成
+        const result = await response.json();
+
+        if (result.success === true) {
+          this.metaData.nick = result.data.name;
+        } else {
+          this.metaData.nick = qqNum;
+        }
+
+        this.updateMeta();
+      } catch (error) {
+        console.error('获取 QQ 昵称失败:', error);
+        // 发生错误时，回退到默认值
+        this.metaData.nick = qqNum;
+      } finally {
+        // finally 确保无论成功还是失败，loading 状态都会被重置
+        this.loading = false;
       }
     },
     checkAdminCrypt () {
