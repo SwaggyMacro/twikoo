@@ -249,7 +249,7 @@ export default {
       }
       this.capLoad = new Promise((resolve, reject) => {
         const scriptEl = document.createElement('script')
-        scriptEl.src = 'https://cdn.jsdmirror.com/npm/@cap.js/widget'
+        scriptEl.src = 'https://cdn.ncii.cn/project/capjs/0.1.43/widget/cap.min.js'
         scriptEl.onload = resolve
         scriptEl.onerror = reject
         this.$refs['cap-container'].appendChild(scriptEl)
