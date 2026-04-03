@@ -51,7 +51,7 @@ import logger from 'twikoo-func/utils/logger'
 import constants from 'twikoo-func/utils/constants'
 
 const { RES_CODE, MAX_REQUEST_TIMES } = constants
-const VERSION = '1.7.6'
+const VERSION = '1.7.7'
 
 // 注入自定义依赖（对标 Cloudflare 版本）
 setCustomLibs({
@@ -836,11 +836,18 @@ async function checkCaptcha (event, ip) {
       geeTestGenTime: event.geeTestGenTime
     })
   } else if (provider === 'Cap' && config.CAP_API_ENDPOINT && config.CAP_SECRET_KEY) {
+    if (!event.capToken) {
+      throw new Error('验证码 token 缺失，请刷新页面重试')
+    }
     await checkCapCaptcha({
       capToken: event.capToken,
       capSecretKey: config.CAP_SECRET_KEY,
       capApiEndpoint: config.CAP_API_ENDPOINT
     })
+  } else if (provider === 'Cap') {
+    throw new Error('Cap 验证码配置不完整，请联系管理员')
+  } else if (provider) {
+    throw new Error(`不支持的验证码类型: ${provider}`)
   }
 }
 
